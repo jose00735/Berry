@@ -3,6 +3,6 @@
 import sys
 import logging
 logging.basicConfig(stream=sys.stderr)
-sys.path.insert(0,"/var/www/Prueba")
+sys.path.insert(0,"/var/www/Berry")
 
-from prueba import app as application
+from berry import app as application
