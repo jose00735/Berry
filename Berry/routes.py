@@ -81,12 +81,13 @@ def account():
 def new_post():
     form = PostForm()
     if form.validate_on_submit():
-        post = Post(title=form.title.data, content=form.content.data, author=current_user)
+        code_file = save_picture(form.picture.data)
+        post = Post(title=form.title.data, content=form.content.data, author=current_user, code_file=code_file)
         db.session.add(post)
         db.session.commit()
         flash('Your post has been created!', 'success')
         return redirect(url_for('home'))
-    return render_template('create_post.html', title = 'New Post', form=form, legend='Update Post')
+    return render_template('create_post.html', title = 'New Post', form=form, legend='New Post')
 
 
 def save_picture(form_picture):
@@ -100,10 +101,25 @@ def save_picture(form_picture):
     i.save(picture_path)
     return picture_fn
 
+def save_code(form_code):
+    random_hex = secrets.token_hex(8)
+    _, f_ext = os.path.splitext(form_code.filename)
+    code_fn = random_hex + f_ext
+    code_path = os.path.join(app.root_path, 'static/codes', code_fn)
+    form_code.save(code_path)
+    return code_fn
+
 @app.route("/post/<int:post_id>", methods=['GET', 'POST'])
 def post(post_id):
     post = Post.query.get_or_404(post_id)
     user = User.query.filter_by(id=post_id)
+    '''
+    form = UpdateAccountForm()
+    if form.validate_on_submit():
+        if form.picture.data:
+            picture_file = save_picture(form.picture.data)
+            current_user.image_file = picture_file
+    '''
     return render_template('post.html', user=user, title=post.title, post=post)
 
 
