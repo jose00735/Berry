@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div class = "my-2">
+        <div class = "container my-4">
+            <h1>Post - {{ post.title }}</h1>
+        </div>
+        <div class = "card border-primary mb-3 container">
+            <div class = "row">
+                <div class = "col-sm-2 m-1">
+                    <img class="rounded-circle img-thumbnail" src="{{ url_for('static', filename='profile_pics/' + post.author.image_file ) }}">
+                </div>
+                <div class = "col-sm">
+                    <div class = "card-header">
+                        <h2>{{ post.title }}</h2>
+                        {% if post.author == current_user %}
+                            <div>
+                                <a href = "{{ url_for('update_post', post_id=post.id) }}" class="btn btn-primary btn-sm m-1">Update</a>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class = "card-body">
+                        <a class = "card-title mr-2" href="{{ url_for('user_posts', username = post.author.username ) }}"> By {{ post.author.username }}</a>
+                        <small class="text-muted"> {{ post.date_post.strftime('%Y-%m-%d') }}</small>
+                        <p class = "card-text">{{ post.content }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+{% block footer_button %}
+    {% if post.author == current_user %}
+        <div class = "m-2">
+            <form action="{{ url_for('delete_post',post_id=post.id) }}" method="POST">
+                <input type="submit" class="btn btn-danger" value="Delete">
+            </form>
+        </div>
+    {% endif %}
+{% endblock footer_button %}
